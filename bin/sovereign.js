@@ -71,6 +71,14 @@ async function main() {
     return;
   }
 
+  if (args[0] === '--direct') {
+    const { directDomains } = require('../lib/direct');
+    console.log('\n  Domains with direct federal API access (no intermediary):');
+    directDomains().forEach(d => console.log('    • ' + d));
+    console.log('\n  Other domains fall back to Open Primitive.\n');
+    return;
+  }
+
   if (args[0] === '--export') {
     const mem = { identity: { agentId: keys.agentId, publicKey: keys.publicKey }, ...require('../lib/store').load() };
     console.log(JSON.stringify(mem, null, 2));
