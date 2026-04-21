@@ -1,0 +1,10 @@
+{
+  "name": "sovereign-agent",
+  "version": "0.1.0",
+  "description": "A personal agent that bends the internet toward you.",
+  "bin": { "sovereign-agent": "./bin/sovereign.js" },
+  "files": ["bin/", "lib/", "intents/"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/writesdavid/sovereign-agent" },
+  "engines": { "node": ">=18.0.0" }
+}
