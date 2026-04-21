@@ -97,16 +97,33 @@ sovereign-agent --export            Export memory as JSON
 
 The agent queries across domains when the question spans them. "Is 49506 a good place to live?" triggers water, air, safety, demographics, and hospitals.
 
-## The protocol
+## The Protocol
 
-This agent is built on the [Open Primitive Protocol](https://openprimitive.com) — an open standard for how AI agents consume verified data. Every response carries:
+Read the whitepaper: [SOVEREIGN.md](SOVEREIGN.md)
 
-- **Source** — which federal agency produced the data
-- **Freshness** — when the data was last updated
-- **Confidence** — how reliable the data is
-- **Signature** — Ed25519 cryptographic proof the data wasn't altered
+Sovereign defines four layers. This agent uses all of them.
 
-The protocol has four layers: Data, Identity, Intent, and Action. This agent uses all four.
+| Layer | What | Status |
+|-------|------|--------|
+| Data | Signed, verified responses with provenance | Live — api.openprimitive.com |
+| Identity | Ed25519 keypair on your device, no registry | Live — ~/.sovereign/keypair.json |
+| Intent | Goal-based queries, resolved across services | Live — plain English in, structured data out |
+| Action | Agent acts on your behalf, negotiate terms | Live — watch, compare, monitor |
+
+## Build a Provider
+
+Make your service accept sovereign intents in 10 minutes.
+
+Copy `provider/provider-template.js`. Edit three things: your service name, your terms, and your resolve function. Start the server. Any sovereign agent can now discover and query your service.
+
+See `provider/example-local-weather.js` for a working example.
+
+## Connected
+
+- [Open Primitive Protocol](https://openprimitive.com) — the data layer (30 federal domains, Ed25519 signed)
+- [Open Primitive API](https://api.openprimitive.com) — live API
+- [MCP Server](https://www.npmjs.com/package/open-primitive-mcp) — 33 agent tools
+- [Whitepaper](SOVEREIGN.md) — the full protocol spec
 
 ## Sovereignty
 

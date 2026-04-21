@@ -19,7 +19,7 @@ npx sovereign-agent "Is my water safe? I live in 90210"
 Build on it: the `provider/` directory has a template. Edit 3 things — your data source, your transform, your route — and your service speaks the protocol. Every provider signs responses the same way.
 
 - Repo: https://github.com/writesdavid/sovereign-agent
-- Protocol spec: https://github.com/writesdavid/sovereign-agent/blob/main/PROTOCOL.md
+- Whitepaper: https://github.com/writesdavid/sovereign-agent/blob/main/SOVEREIGN.md
 - Live API: https://api.openprimitive.com
 
 ---
