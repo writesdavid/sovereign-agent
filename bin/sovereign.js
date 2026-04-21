@@ -5,6 +5,7 @@ const identity = require('../lib/identity');
 const { parseIntent, resolve } = require('../lib/resolver');
 const display = require('../lib/display');
 const store = require('../lib/store');
+const wallet = require('../lib/wallet');
 
 async function main() {
   const args = process.argv.slice(2);
@@ -23,7 +24,27 @@ async function main() {
     console.log('  this machine.');
   }
 
+  // Init wallet
+  const w = wallet.init(keys);
+
   // CLI flags
+  if (args[0] === '--wallet') {
+    const s = wallet.summary(w);
+    console.log('\n  ══ Sovereign Wallet ══');
+    console.log('  Address:       ' + s.address);
+    console.log('  Created:       ' + s.created.slice(0, 10));
+    console.log('  Sessions:      ' + s.sessions);
+    console.log('  Intents:       ' + s.intents);
+    console.log('  Watches:       ' + s.watches);
+    console.log('  Relationships: ' + s.relationships);
+    console.log('  Permissions:   ' + s.permissions.active + ' active, ' + s.permissions.revoked + ' revoked');
+    if (s.topDomains.length) {
+      console.log('  Top domains:   ' + s.topDomains.join(', '));
+    }
+    console.log('');
+    return;
+  }
+
   if (args[0] === '--watches' || args[0] === '-w') {
     const watches = store.getWatches();
     if (watches.length === 0) { console.log('\n  No active watches.\n'); return; }
@@ -132,8 +153,11 @@ async function handleIntent(text, keys) {
     displaySingle(intent, resolution);
   }
 
-  // Store in history
+  // Store in history + wallet
   store.addIntent(intent, resolution.results);
+  const sig = identity.sign(keys.privateKey, resolution.results);
+  wallet.recordIntent(wallet.loadWallet(), intent, resolution, sig);
+  wallet.addRelationship(wallet.loadWallet(), { url: 'https://api.openprimitive.com', name: 'Open Primitive' });
 
   console.log('  Want to watch this? Type "watch" or ask something else.\n');
 }
