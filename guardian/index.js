@@ -81,11 +81,12 @@ class Guardian {
 
     // Agreement scoring
     const agreement = agreementScorer(prompt, response);
-    if (agreement.score > 0.6) {
-      result.warnings.push('High agreement pattern detected — model may be sycophantic.');
-      if (agreement.recommendation === 'block') {
+    const sycophancyThreshold = (this.profile.type === 'child' || this.profile.type === 'teen') ? 0.35 : 0.6;
+    if (agreement.score > sycophancyThreshold) {
+      result.warnings.push('Sycophantic response detected — model agreed instead of challenging.');
+      if (agreement.recommendation === 'block' || (agreement.score > 0.4 && (this.profile.type === 'child' || this.profile.type === 'teen'))) {
         result.allow = false;
-        result.modified = '[Guardian blocked a sycophantic response. The model agreed with something it should have challenged.]';
+        result.modified = '[Guardian blocked this response. The AI agreed with something it should have challenged. Ask a trusted adult about this topic.]';
         result.level = 'orange';
         return result;
       }
