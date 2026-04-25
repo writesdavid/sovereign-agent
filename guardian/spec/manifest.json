@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guardian-protocol.org/schemas/manifest/v1",
+  "title": "Guardian Provider Manifest",
+  "description": "The declaration a provider hosts at /.well-known/guardian.json to advertise Guardian compliance.",
+  "type": "object",
+  "required": ["provider", "guardianVersion", "scoring", "publicKey"],
+  "additionalProperties": false,
+  "properties": {
+    "provider": {
+      "type": "object",
+      "required": ["name", "version", "contact"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable provider name."
+        },
+        "version": {
+          "type": "string",
+          "description": "Provider's own software version string."
+        },
+        "contact": {
+          "type": "string",
+          "format": "email",
+          "description": "Email address for trust and safety inquiries."
+        }
+      }
+    },
+    "guardianVersion": {
+      "type": "string",
+      "const": "1.0",
+      "description": "The Guardian protocol version this manifest supports."
+    },
+    "scoring": {
+      "type": "object",
+      "required": ["sycophancy", "escalation", "dependency", "contentRisk"],
+      "additionalProperties": false,
+      "properties": {
+        "sycophancy": {
+          "type": "string",
+          "description": "One-sentence description of how the provider computes the sycophancy score."
+        },
+        "escalation": {
+          "type": "string",
+          "description": "One-sentence description of how the provider computes the escalation score."
+        },
+        "dependency": {
+          "type": "string",
+          "description": "One-sentence description of how the provider computes the dependency score."
+        },
+        "contentRisk": {
+          "type": "string",
+          "description": "One-sentence description of how the provider computes the contentRisk score."
+        }
+      }
+    },
+    "publicKey": {
+      "type": "string",
+      "pattern": "^ed25519:[A-Za-z0-9+/=]+$",
+      "description": "Ed25519 public key used to verify envelope signatures."
+    },
+    "thresholds": {
+      "type": "object",
+      "description": "Advisory score thresholds the provider recommends. Clients decide whether to enforce them.",
+      "additionalProperties": false,
+      "properties": {
+        "sycophancy": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "escalation": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "dependency": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "contentRisk": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        }
+      }
+    },
+    "dataRetention": {
+      "type": "object",
+      "required": ["policy", "durationDays"],
+      "additionalProperties": false,
+      "properties": {
+        "policy": {
+          "type": "string",
+          "description": "Human-readable summary of the provider's data retention policy."
+        },
+        "durationDays": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum number of days the provider retains conversation data. 0 means no retention."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://guardian-protocol.org/schemas/envelope/v1",
+  "title": "Guardian Envelope",
+  "description": "The trust and safety envelope that providers attach to every AI response.",
+  "type": "object",
+  "required": ["guardian"],
+  "properties": {
+    "guardian": {
+      "type": "object",
+      "required": ["version", "scores", "audience"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "const": "1.0",
+          "description": "Guardian protocol version."
+        },
+        "scores": {
+          "type": "object",
+          "required": ["sycophancy", "escalation", "dependency", "contentRisk"],
+          "additionalProperties": false,
+          "properties": {
+            "sycophancy": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0,
+              "description": "How much the model agreed with the user versus challenged their assumptions."
+            },
+            "escalation": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0,
+              "description": "Emotional intensity trend across the conversation."
+            },
+            "dependency": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0,
+              "description": "Parasocial attachment risk based on conversation patterns."
+            },
+            "contentRisk": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0,
+              "description": "Severity of harmful or policy-violating content in the response."
+            }
+          }
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["crisis", "self-harm", "sexual", "financial", "medical"]
+          },
+          "uniqueItems": true,
+          "description": "Specific content detections that require attention."
+        },
+        "session": {
+          "type": "object",
+          "required": ["turnCount", "durationSeconds", "trajectory"],
+          "additionalProperties": false,
+          "properties": {
+            "turnCount": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of user-assistant turn pairs in this session."
+            },
+            "durationSeconds": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total elapsed time since the session started."
+            },
+            "trajectory": {
+              "type": "string",
+              "enum": ["stable", "escalating", "de-escalating"],
+              "description": "Direction of risk scores over the session."
+            }
+          }
+        },
+        "audience": {
+          "type": "object",
+          "required": ["child", "teen", "requiresAdult"],
+          "additionalProperties": false,
+          "properties": {
+            "child": {
+              "type": "boolean",
+              "description": "True if the response is safe for users under 13."
+            },
+            "teen": {
+              "type": "boolean",
+              "description": "True if the response is safe for users aged 13-17."
+            },
+            "requiresAdult": {
+              "type": "boolean",
+              "description": "True if the response needs adult context or supervision."
+            }
+          }
+        },
+        "providerSignature": {
+          "type": "string",
+          "pattern": "^ed25519:[A-Za-z0-9+/=]+$",
+          "description": "Ed25519 signature over the canonical JSON of the envelope (excluding this field)."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}
